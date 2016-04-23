@@ -58,27 +58,25 @@ $(function() {
         /* Ensures the menu element is
          * hidden by default.
          */
-         it('is hidden by default', function() {
+        it('is hidden by default', function() {
             expect($("body").hasClass('menu-hidden')).toBe(true);
-         });
+        });
 
-         /* Ensures the menu changes
-          * visibility when the menu icon is clicked.
-          */
-         it('changes visibility when clicked', function() {
+        /* Ensures the menu changes
+         * visibility when the menu icon is clicked.
+         */
+        it('changes visibility when clicked', function() {
             $('.menu-icon-link').trigger('click');
             expect($("body").hasClass('menu-hidden')).toBe(false);
             $('.menu-icon-link').trigger('click');
             expect($("body").hasClass('menu-hidden')).toBe(true);
-         });
+        });
     });
 
     /* Test suite for initial entries */
     describe('Initial Entries', function() {
         beforeEach(function(done) {
-            setTimeout(function() {
-                done();
-            }, 2500);
+            loadFeed(1, done);
         });
 
         /* Ensures when the loadFeed
@@ -93,12 +91,14 @@ $(function() {
 
     /* Test suite for New Feed Selection */
     describe('New Feed Selection', function() {
+        var feedHtml = "";
+
         beforeEach(function(done) {
-            setTimeout(function() {
-                expect($('.feed').html()).not.toContain('Lint your CSS with stylelint');
-                expect($('.feed').html()).toContain('Udacity has a new ___!');
-                loadFeed(1, done);
-            }, 2000);
+            loadFeed(1, function() {
+                feedHtml = $('.feed').html();
+
+                loadFeed(2, done);
+            });
         });
 
         /* Ensures when a new feed is loaded
@@ -106,8 +106,7 @@ $(function() {
          * Remember, loadFeed() is asynchronous.
          */
         it('changes content', function(done) {
-            expect($('.feed').html()).toContain('Lint your CSS with stylelint');
-            expect($('.feed').html()).not.toContain('Udacity has a new ___!');
+            expect($('.feed').html()).not.toBe(feedHtml);
             done();
         });
      });
