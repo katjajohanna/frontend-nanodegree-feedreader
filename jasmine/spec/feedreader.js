@@ -33,8 +33,7 @@ $(function() {
          */
          it('each has URL', function() {
             allFeeds.forEach(function(feed) {
-                expect(feed.url).toBeDefined();
-                expect(feed.url.length).not.toBe(0);
+                expect(feed.url).toBeTruthy();
             });
          });
 
@@ -67,9 +66,9 @@ $(function() {
          */
         it('changes visibility when clicked', function() {
             $('.menu-icon-link').trigger('click');
-            expect($("body").hasClass('menu-hidden')).toBe(false);
+            expect($("body").hasClass('menu-hidden')).toBeFalsy(false);
             $('.menu-icon-link').trigger('click');
-            expect($("body").hasClass('menu-hidden')).toBe(true);
+            expect($("body").hasClass('menu-hidden')).toBeTruthy();
         });
     });
 
@@ -83,9 +82,8 @@ $(function() {
          * function is called and completes its work, there is at least
          * a single .entry element within the .feed container.
          */
-        it('are visible', function(done) {
-            expect($('.feed').has('.entry').length).toBeGreaterThan(0);
-            done();
+        it('are visible', function() {
+            expect($('.feed .entry').length).toBeGreaterThan(0);
         });
      });
 
@@ -103,11 +101,27 @@ $(function() {
 
         /* Ensures when a new feed is loaded
          * by the loadFeed function that the content actually changes.
-         * Remember, loadFeed() is asynchronous.
+         */
+        it('changes content', function() {
+            expect($('.feed').html()).not.toBe(feedHtml);
+        });
+     });
+
+    describe('New Feed Selection (another way to do it)', function() {
+        /* Ensures when a new feed is loaded
+         * by the loadFeed function that the content actually changes.
          */
         it('changes content', function(done) {
-            expect($('.feed').html()).not.toBe(feedHtml);
-            done();
+            var feedHtml = "";
+
+            loadFeed(1, function() {
+                feedHtml = $('.feed').html();
+
+                loadFeed(2, function() {
+                    expect($('.feed').html()).not.toBe(feedHtml);
+                    done();
+                });
+            });
         });
      });
 }());
